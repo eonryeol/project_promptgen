@@ -126,7 +126,40 @@
             cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: 0.2s;
         }
         .preset-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .preset-btn.active-preset {
+            border-color: var(--primary);
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
         .reset-btn { border-color: var(--danger); color: var(--danger); }
+
+        /* Preset Popup Styling */
+        .preset-popup {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            padding: 1rem 2rem;
+            border-radius: 99px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 3000;
+            font-weight: 700;
+            font-size: 0.95rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s, transform 0.5s;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .preset-popup.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-20px);
+        }
+
         .reset-btn:hover { background-color: var(--danger); color: white; }
 
         textarea, input[type="text"], select { 
@@ -454,6 +487,8 @@
     <p class="copyright">© 2026 LLMGO Engine. Memory Enabled.</p>
 </footer>
 
+<div id="presetPopup" class="preset-popup"></div>
+
 <script>
     const translations = {
         ko: {
@@ -562,6 +597,7 @@
         document.getElementById('timeframe').value = ""; document.getElementById('credibility').value = ""; document.getElementById('role').value = "Expert";
         document.getElementById('manualRoleInput').value = ""; document.getElementById('cotCheck').checked = false; document.getElementById('noIntroCheck').checked = false;
         document.getElementById('noJargonCheck').checked = false; document.getElementById('exampleType').value = "custom"; document.getElementById('exampleInput').value = "";
+        document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active-preset'));
         handleRoleChange(); savePrefs();
     }
 
@@ -581,6 +617,7 @@
         document.getElementById('noJargonCheck').checked = false; 
         document.getElementById('exampleType').value = "custom"; 
         document.getElementById('exampleInput').value = "";
+        document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active-preset'));
         handleRoleChange(); validateTaskInput(); savePrefs();
     }
 
@@ -604,6 +641,20 @@
 
     document.addEventListener('click', () => document.querySelectorAll('.tooltip-box').forEach(t => t.style.display = 'none'));
 
+    function showPresetPopup(presetName) {
+        const popup = document.getElementById('presetPopup');
+        const msg = currentLang === 'ko' 
+            ? `"${presetName}" 한 답변을 위한 항목들이 자동으로 선택되었습니다. 시스템 프롬프트 생성 버튼을 눌러보세요!`
+            : `Items for "${presetName}" answers have been automatically selected. Click Generate Prompt!`;
+        popup.innerText = msg;
+        popup.classList.add('show');
+        
+        if (window.presetTimeout) clearTimeout(window.presetTimeout);
+        window.presetTimeout = setTimeout(() => {
+            popup.classList.remove('show');
+        }, 3000);
+    }
+
     function applyPreset(type) {
         const presets = {
             fact: { tf: 'realtime', cr: 'Cross-reference multiple sources.', tone: 'Analytical', style: 'Journalistic' },
@@ -617,6 +668,21 @@
                 const el = document.getElementById(k === 'tf' ? 'timeframe' : k === 'cr' ? 'credibility' : k === 'aud' ? 'audience' : k === 'cot' ? 'cotCheck' : k === 'nj' ? 'noJargonCheck' : k);
                 if (el) el.type === 'checkbox' ? el.checked = p[k] : el.value = p[k];
             });
+
+            // Handle active button state
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active-preset'));
+            let btnId = '';
+            let presetName = '';
+            if (type === 'fact') { btnId = 'btnFact'; presetName = currentLang === 'ko' ? '팩트 체크' : 'Fact-Check'; }
+            else if (type === 'easy') { btnId = 'btnEasy'; presetName = currentLang === 'ko' ? '이해하기 쉬운' : 'Easy Explainer'; }
+            else if (type === 'expert') { btnId = 'btnExpert'; presetName = currentLang === 'ko' ? '전문가 심층 분석' : 'Deep Analysis'; }
+            else if (type === 'creative') { btnId = 'btnCreative'; presetName = currentLang === 'ko' ? '창의적 스토리텔링' : 'Storytelling'; }
+            
+            if (btnId) {
+                document.getElementById(btnId).classList.add('active-preset');
+                showPresetPopup(presetName);
+            }
+
             handleRoleChange(); savePrefs();
             document.getElementById('bottom-target').scrollIntoView({ behavior: 'smooth' });
             const btn = document.getElementById('convertBtn');
