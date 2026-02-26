@@ -4,8 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from google import genai
 import os
 
-# API 키를 코드에 직접 하드코딩하는 방식
-client = genai.Client(api_key="AIzaSyDs7apTACX2eZdK35z_BlDftl2C3bpuGN0")
 
 # FastAPI 앱 초기화
 app = FastAPI()
