@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FC 온라인 스쿼드 시뮬레이터 (시즌 선택형)</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f8f9fa; }
+        .container { max-width: 700px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        /* 검색창 및 드롭다운 */
+        .search-box { position: relative; margin-bottom: 15px; }
+        .search-input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ddd; max-height: 250px; overflow-y: auto; z-index: 1000; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .dropdown-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #eee; font-weight: bold; }
+        .dropdown-item:hover { background: #f1f3f5; color: #3498db; }
+        
+        /* 선수 이름 표시 영역 */
+        .selected-name-box { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; display: none; color: #2c3e50; }
+
+        /* 시즌 아이콘 그리드 */
+        .season-container { display: none; margin-bottom: 20px; }
+        .season-title { font-size: 0.9em; color: #7f8c8d; margin-bottom: 10px; }
+        .season-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .season-item { 
+            cursor: pointer; border: 2px solid transparent; border-radius: 6px; 
+            padding: 8px; background: #f4f6f8; text-align: center; width: 60px; transition: 0.2s;
+        }
+        .season-item:hover { background: #e9ecef; }
+        .season-item.active { border-color: #3498db; background: #e1f0fa; }
+        .season-item img { width: 40px; height: 40px; object-fit: contain; }
+        .season-item span { display: block; font-size: 10px; margin-top: 4px; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 강화 수치 버튼 */
+        .level-group { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 5px; }
+        .level-btn { padding: 8px 12px; cursor: pointer; background: #fff; border: 1px solid #ccc; border-radius: 3px; width: 35px; }
+        .level-btn.active { background: #e67e22; color: white; border-color: #e67e22; font-weight: bold; }
+
+        .fetch-btn { width: 100%; padding: 15px; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 4px; font-size: 1.2em; font-weight: bold; }
+        .fetch-btn:disabled { background: #95a5a6; cursor: not-allowed; }
+        
+        .result-box { margin-top: 20px; padding: 20px; background: #f0f0f0; border-radius: 5px; text-align: center; display: none; }
+        .price { font-weight: bold; font-size: 2em; color: #e74c3c; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>스쿼드 구성 / 시세 조회</h2>
+    
+    <div class="search-box">
+        <input type="text" id="searchInput" class="search-input" placeholder="선수 이름을 입력해 (예: 손흥민)" autocomplete="off">
+        <div id="dropdownList" class="dropdown"></div>
+    </div>
+
+    <div id="selectedNameBox" class="selected-name-box"></div>
+
+    <div id="seasonContainerWrapper" class="season-container">
+        <div class="season-title">시즌을 선택해:</div>
+        <div id="seasonGrid" class="season-grid"></div>
+    </div>
+
+    <div class="level-group" id="levelContainer"></div>
+    
+    <button id="fetchBtn" class="fetch-btn" disabled>선수와 시즌을 먼저 선택해</button>
+    
+    <div id="result" class="result-box"></div>
+</div>
+
+<script>
+    let playersByName = {}; // 이름을 Key로, spid 배열을 Value로 가지는 객체
+    let seasonData = {};    // seasonId를 Key로 가지는 객체
+    let currentSelectedSpid = null;
+    let selectedLevel = 1;
+
+    // 1. JSON 데이터 불러오기 및 가공
+    async function loadData() {
+        try {
+            const [spidRes, seasonRes] = await Promise.all([
+                fetch('/spid.json'),
+                fetch('/seasonid.json')
+            ]);
+            
+            const rawSpidData = await spidRes.json();
+            const rawSeasonData = await seasonRes.json();
+            
+            // 시즌 데이터 최적화
+            rawSeasonData.forEach(season => {
+                seasonData[season.seasonId] = season;
+            });
+
+            // ★ 핵심 로직: 동일한 이름을 가진 선수의 spid들을 하나로 묶음
+            rawSpidData.forEach(p => {
+                if (!playersByName[p.name]) {
+                    playersByName[p.name] = [];
+                }
+                playersByName[p.name].push(p.id);
+            });
+
+            console.log(`데이터 로드 완료: 고유 선수 이름 ${Object.keys(playersByName).length}명`);
+        } catch (e) {
+            console.error("데이터 로딩 실패.", e);
+        }
+    }
+
+    // 2. 검색창 자동완성 (이름만 띄우기)
+    const searchInput = document.getElementById('searchInput');
+    const dropdownList = document.getElementById('dropdownList');
+
+    searchInput.addEventListener('input', function() {
+        const val = this.value.trim();
+        dropdownList.innerHTML = '';
+        
+        if (!val) {
+            dropdownList.style.display = 'none';
+            return;
+        }
+
+        // 전체 이름 목록 중 입력값이 포함된 것 30개 추출
+        const matchedNames = Object.keys(playersByName).filter(name => name.includes(val)).slice(0, 30);
+        
+        if (matchedNames.length === 0) {
+            dropdownList.style.display = 'none';
+            return;
+        }
+
+        matchedNames.forEach(name => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'dropdown-item';
+            itemDiv.innerText = name;
+            
+            // 이름 클릭 시 해당 선수의 모든 시즌 렌더링
+            itemDiv.addEventListener('click', () => renderSeasons(name));
+            
+            dropdownList.appendChild(itemDiv);
+        });
+
+        dropdownList.style.display = 'block';
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target !== searchInput) dropdownList.style.display = 'none';
+    });
+
+    // 3. 클릭한 선수의 시즌 이미지 렌더링
+    function renderSeasons(playerName) {
+        searchInput.value = '';
+        currentSelectedSpid = null; // 시즌을 고르기 전까진 검색 불가
+        document.getElementById('fetchBtn').disabled = true;
+        document.getElementById('result').style.display = 'none';
+        
+        document.getElementById('selectedNameBox').innerText = playerName;
+        document.getElementById('selectedNameBox').style.display = 'block';
+        document.getElementById('seasonContainerWrapper').style.display = 'block';
+        
+        const spids = playersByName[playerName];
+        const seasonGrid = document.getElementById('seasonGrid');
+        seasonGrid.innerHTML = '';
+
+        spids.forEach(spid => {
+            // spid의 앞자리를 잘라내어 seasonId 추출 (FC온라인 규칙: spid = seasonId * 1000000 + 선수고유번호)
+            const seasonId = Math.floor(spid / 1000000); 
+            const sData = seasonData[seasonId] || { seasonImg: '', className: 'Unknown' };
+
+            // 시즌 이미지가 있는 경우만 표시 (데이터 파편화 방지)
+            if(sData.seasonImg) {
+                const sItem = document.createElement('div');
+                sItem.className = 'season-item';
+                sItem.innerHTML = `
+                    <img src="${sData.seasonImg}" alt="${sData.className}">
+                `;
+
+                sItem.addEventListener('click', (e) => {
+                    // 모든 시즌 아이템 선택 해제 후 클릭한 것만 활성화
+                    document.querySelectorAll('.season-item').forEach(el => el.classList.remove('active'));
+                    sItem.classList.add('active');
+                    
+                    // 현재 조회할 spid 확정
+                    currentSelectedSpid = spid;
+                    
+                    const fetchBtn = document.getElementById('fetchBtn');
+                    fetchBtn.innerText = `${playerName} 시세 불러오기`;
+                    fetchBtn.disabled = false;
+                    document.getElementById('result').style.display = 'none';
+                });
+
+                seasonGrid.appendChild(sItem);
+            }
+        });
+    }
+
+    // 4. 강화 버튼 생성 (1~13)
+    const levelContainer = document.getElementById('levelContainer');
+    for (let i = 1; i <= 13; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'level-btn';
+        btn.innerText = i;
+        if (i === 1) btn.classList.add('active');
+        
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            selectedLevel = i;
+        });
+        levelContainer.appendChild(btn);
+    }
+
+    // 5. 서버 통신 (가격 가져오기)
+    document.getElementById('fetchBtn').addEventListener('click', async () => {
+        if (!currentSelectedSpid) return;
+
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = "넥슨 서버에서 시세 데이터 로딩 중...";
+
+        try {
+            const response = await fetch(`/api/price?spid=${currentSelectedSpid}&n1strong=${selectedLevel}`);
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                resultDiv.innerHTML = `
+                    <div style="color:#7f8c8d;">강화 등급: ${selectedLevel}카</div>
+                    <div class="price">${data.price_text} BP</div>
+                    <div style="font-size:0.9em; color:#bdc3c7; margin-top:5px;">데이터 원본: ${data.price_number}</div>
+                `;
+            } else {
+                resultDiv.innerHTML = `<span style="color:red;">오류: ${data.message}</span>`;
+            }
+        } catch (error) {
+            resultDiv.innerHTML = `<span style="color:red;">서버 연결 실패.</span>`;
+        }
+    });
+
+    // 시작
+    loadData();
+</script>
+
+</body>
+</html>

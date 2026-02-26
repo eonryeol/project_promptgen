@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LLMGO - AI 10배 똑똑하게 사용하기. 스마트한 AI 유저를 위한 고품질 프롬프트 생성기.">
+    <meta name="keywords" content="프롬프트, LLM, ChatGPT, 프롬프트 엔지니어링, AI 질문법, LLMGO, 프롬프트 제너레이터">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eonryeol.github.io/project_promptgen/">
+    <meta property="og:title" content="LLMGO | AI 10배 똑똑하게 사용하기">
+    <meta property="og:description" content="스마트한 AI 유저를 위한 최고의 질문용 프롬프트 생성기.">
+    <meta property="og:image" content="https://eonryeol.github.io/project_promptgen/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="LLMGO | AI 10배 똑똑하게 사용하기">
+    <meta property="twitter:description" content="스마트한 AI 유저를 위한 최고의 질문용 프롬프트 생성기.">
+    <meta property="twitter:image" content="https://eonryeol.github.io/project_promptgen/og-image.png">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8887084276686181" crossorigin="anonymous"></script>
+    <title>LLMGO | AI 10배 똑똑하게 사용하기</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --input-bg: #0f172a;
+            --required: #ef4444;
+            --optional: #64748b;
+            --success: #10b981;
+            --danger: #f43f5e;
+            --card-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        body.light-mode {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --input-bg: #ffffff;
+            --card-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05);
+        }
+
+        * { box-sizing: border-box; scroll-behavior: smooth; }
+        body { 
+            font-family: 'Pretendard', 'Inter', sans-serif; 
+            margin: 0; padding: 0;
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            transition: background-color 0.3s, color 0.3s;
+            line-height: 1.6;
+        }
+
+        nav {
+            background-color: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 1.5rem;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0; z-index: 1000;
+        }
+        body.light-mode nav { background-color: rgba(255, 255, 255, 0.85); }
+
+        .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-main); font-weight: 800; font-size: 1.4rem; }
+        .logo-icon { width: 32px; height: 32px; fill: var(--primary); flex-shrink: 0; }
+
+        .nav-links { display: flex; gap: 1.25rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 700; transition: 0.2s; white-space: nowrap; }
+        .nav-links a:hover { color: var(--primary); }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 3rem 1.25rem; }
+        
+        .hero { text-align: center; margin-bottom: 3.5rem; }
+        .hero h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 1rem; color: var(--text-main); }
+        .hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; font-weight: 500; }
+        
+        .how-to-btn {
+            margin-top: 2rem; background: none; border: 2px solid var(--primary); color: var(--primary);
+            padding: 0.75rem 1.5rem; border-radius: 99px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 0.95rem;
+        }
+        .how-to-btn:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+
+        .section { 
+            background: var(--card-bg); padding: 2rem; border-radius: 24px; border: 1px solid var(--border); 
+            box-shadow: var(--card-shadow); margin-bottom: 2rem;
+        }
+        .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 1.75rem; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        
+        .flex-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .flex-item { flex: 1; display: flex; flex-direction: column; gap: 0.75rem; min-width: 280px; position: relative; }
+        
+        .label-wrapper { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; color: var(--text-main); }
+        .label-optional { color: var(--optional); font-size: 0.8rem; font-weight: 500; }
+
+        .info-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 18px; height: 18px; font-size: 10px; color: #fff;
+            background-color: var(--text-muted); border-radius: 50%; cursor: pointer; transition: 0.2s;
+        }
+
+        .tooltip-box {
+            position: absolute; bottom: 105%; left: 0; background-color: #1e293b; color: #fff;
+            padding: 14px; border-radius: 14px; font-size: 0.85rem; width: 280px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); z-index: 100; display: none;
+            line-height: 1.5; border: 1px solid rgba(255,255,255,0.1);
+        }
+        body.light-mode .tooltip-box { background-color: #f1f5f9; color: #0f172a; border: 1px solid var(--border); }
+
+        .preset-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .preset-btn {
+            background-color: var(--input-bg); border: 1px solid var(--border);
+            color: var(--text-main); padding: 0.65rem 1.25rem; border-radius: 14px;
+            cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: 0.2s;
+        }
+        .preset-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .reset-btn { border-color: var(--danger); color: var(--danger); }
+        .reset-btn:hover { background-color: var(--danger); color: white; }
+
+        textarea, input[type="text"], select { 
+            padding: 1rem; font-size: 1rem; border: 1px solid var(--border); 
+            border-radius: 14px; background-color: var(--input-bg); color: var(--text-main);
+            font-family: inherit; transition: 0.2s; outline: none;
+        }
+        textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        
+        #taskInput.is-invalid { border: 2px solid var(--required); background-color: rgba(239, 68, 68, 0.03); }
+
+        .checkbox-group { display: flex; gap: 1.5rem; flex-wrap: wrap; padding: 1.25rem; background: var(--bg-color); border-radius: 16px; border: 1px solid var(--border); }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 700; position: relative; }
+
+        .output-row { display: flex; gap: 1.5rem; align-items: stretch; margin-top: 2rem; }
+        .button-group { flex: 1; display: flex; flex-direction: column; gap: 1.25rem; }
+        .button-group button { 
+            padding: 1.15rem; cursor: pointer; color: white; border: none; font-weight: 800; 
+            font-size: 1.05rem; border-radius: 16px; transition: 0.3s;
+        }
+        
+        #convertBtn { background-color: var(--primary); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+        #convertBtn.pulse { animation: pulseEffect 0.6s ease-in-out; }
+        @keyframes pulseEffect { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        #copyBtn { background-color: var(--success); }
+
+        #promptOutput { flex: 3; background-color: #0f172a; color: #cbd5e1; font-family: 'Fira Code', monospace; min-height: 450px; border-radius: 18px; border: 1px solid #334155; }
+
+        .info-content { margin-top: 4rem; border-top: 1px solid var(--border); padding-top: 4rem; }
+        .info-content h2 { font-size: 1.75rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--primary); text-align: center; }
+        .info-desc { margin-bottom: 3rem; color: var(--text-muted); font-size: 1.1rem; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem; }
+        .info-card { background: var(--card-bg); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+        .info-card h3 { margin-top: 0; font-size: 1.3rem; color: var(--primary); margin-bottom: 1.25rem; font-weight: 800; }
+        .info-card p { line-height: 1.8; color: var(--text-muted); font-size: 0.95rem; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 1.5rem; }
+        .modal-content { background: var(--card-bg); padding: 2.5rem; border-radius: 24px; max-width: 500px; width: 100%; position: relative; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
+        .modal-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--primary); }
+        .modal-body { font-size: 1.05rem; line-height: 1.8; color: var(--text-main); }
+        .close-modal { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+
+        footer { background-color: var(--card-bg); border-top: 1px solid var(--border); padding: 4rem 1.5rem; margin-top: 4rem; text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
+        .footer-links a { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+        .copyright { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+
+        .toggle-btn { background: var(--bg-color); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 12px; cursor: pointer; color: var(--text-main); font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+
+        @media (max-width: 768px) {
+            nav { height: 90px; padding: 0 1rem; }
+            .logo-container { flex-direction: column; align-items: flex-start; gap: 2px; }
+            .logo-text { font-size: 0.9rem; }
+            .hero h1 { font-size: 1.8rem; line-height: 1.3; }
+            .flex-row, .output-row { flex-direction: column; }
+            .tooltip-box { width: 220px; left: auto; right: 0; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WF45S2SK');</script>
+    <!-- End Google Tag Manager -->
+</head>
+<body class="dark-theme">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WF45S2SK"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+<nav>
+    <a href="#" class="logo-container">
+        <svg class="logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" /></svg>
+        <span class="logo-text">LLMGO</span>
+    </a>
+    <div class="nav-links">
+        <a href="#generator" id="navGen">도구</a>
+        <a href="#guide" id="navGuide">가이드</a>
+        <button class="toggle-btn" id="themeToggle" onclick="toggleTheme()">☀️ 라이트 모드</button>
+        <button class="toggle-btn" id="langToggle" onclick="toggleLanguage()">🌐 English</button>
+    </div>
+</nav>
+
+<div class="container">
+    <header class="hero">
+        <h1 id="heroTitle">AI 10배 똑똑하게 사용하기</h1>
+        <p id="heroDesc">스마트한 AI 유저를 위한 질문용 프롬프트 생성기</p>
+        <button class="how-to-btn" id="btnHowTo" onclick="showModal('howToModal')">How To Use</button>
+    </header>
+
+    <div id="generator">
+        <div class="section">
+            <div class="section-title" id="title1">1. 질문 및 배경</div>
+            <div class="flex-row">
+                <div class="flex-item">
+                    <div class="label-wrapper">
+                        <label for="taskInput" class="required-label" id="lblTask">핵심 질문 (필수)</label>
+                        <span class="info-icon" onclick="toggleTooltip(event, 'tipTask')">?</span>
+                        <div class="tooltip-box" id="tipTask">AI가 수행할 핵심 목표입니다. 목표가 구체적일수록 AI는 사용자의 의도를 정확히 파악하여 엉뚱한 대답을 하지 않고 최적화된 결과물을 도출합니다.</div>
+                    </div>
+                    <textarea id="taskInput" class="is-invalid" oninput="handleInputChange(); validateTaskInput()" placeholder="예: 최근 인기 있는 모바일 게임 장르 분석 보고서 작성"></textarea>
+                </div>
+                <div class="flex-item">
+                    <div class="label-wrapper">
+                        <label for="contextInput" id="lblContext">배경 맥락</label><span class="label-optional" id="optLabel1">(선택)</span>
+                        <span class="info-icon" onclick="toggleTooltip(event, 'tipContext')">?</span>
+                        <div class="tooltip-box" id="tipContext">사용자가 누구인지, 왜 이 질문을 하는지에 대한 상황 정보를 제공하면 AI가 불필요한 가정을 하지 않고 사용자 환경에 100% 맞춤화된 답변을 생성합니다.</div>
+                    </div>
+                    <textarea id="contextInput" oninput="handleInputChange()" placeholder="예: 저는 시장 조사를 수행 중인 기획자입니다."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title" id="titleQuick">⚡ 퀵 프리셋</div>
+            <div class="preset-group">
+                <button class="preset-btn" id="btnFact" onclick="applyPreset('fact')">🌐 팩트 체크 중심</button>
+                <button class="preset-btn" id="btnEasy" onclick="applyPreset('easy')">👶 이해하기 쉬운 설명</button>
+                <button class="preset-btn" id="btnExpert" onclick="applyPreset('expert')">🎓 전문가 심층 분석</button>
+                <button class="preset-btn" id="btnCreative" onclick="applyPreset('creative')">🎨 창의적 스토리텔링</button>
+                <button class="preset-btn reset-btn" id="btnReset" onclick="resetPrefs()">🔄 선택 설정 초기화</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title" id="title2">2. 예시 설정 <span class="label-optional" id="optLabel2" style="margin-left:8px;">(선택)</span></div>
+            <div class="flex-row">
+                <div class="flex-item">
+                    <div class="label-wrapper" style="margin-bottom: 8px;">
+                        <select id="exampleType" onchange="updateExampleText(); handleInputChange()">
+                            <option value="custom" id="optExCustom">직접 입력</option>
+                            <option value="table" id="optExTable">표(Table) 형태</option>
+                            <option value="step" id="optExStep">단계별 가이드</option>
+                            <option value="qna" id="optExQna">Q&A 인터뷰 형태</option>
+                            <option value="procon" id="optExProcon">장단점 비교</option>
+                            <option value="analogy" id="optExAnalogy">비유(Analogy) 포함</option>
+                        </select>
+                        <span class="info-icon" onclick="toggleTooltip(event, 'tipExample')">?</span>
+                        <div class="tooltip-box" id="tipExample">답변 예시를 제공(Few-shot)하면 AI가 사용자가 원하는 출력 패턴을 학습합니다. 이를 통해 복잡한 구조의 데이터도 오차 없이 일관된 형식으로 대답하게 됩니다.</div>
+                    </div>
+                    <textarea id="exampleInput" oninput="handleInputChange()" placeholder="예: Q: [질문]? A: [답변] 형식으로 3가지 예시를 들어줘."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title" id="title3">3. 스타일 및 독자 설정</div>
+            <div class="flex-row">
+                <div class="flex-item">
+                    <div class="label-wrapper">
+                        <label id="lblAudience">대상 독자</label>
+                        <span class="info-icon" onclick="toggleTooltip(event, 'tipAudience')">?</span>
+                        <div class="tooltip-box" id="tipAudience">답변을 읽을 대상을 지정하면 AI가 용어의 난이도와 설명의 깊이를 조절합니다. 예를 들어 '어린이'로 설정하면 비유 위주의 쉬운 설명을, '전문가'로 설정하면 심화 용어를 사용한 전문 지식을 답변합니다.</div>
+                    </div>
+                    <select id="audience" onchange="handleInputChange()">
+                        <option value="" id="optAuNone">제한 없음</option>
+                        <option value="General Public" id="optAuGeneral">일반 대중</option>
+                        <option value="Beginners" id="optAuBeginner">입문자</option>
+                        <option value="Experts" id="optAuExpert">해당 분야 전문가</option>
+                        <option value="Executives" id="optAuExecutive">의사 결정권자</option>
+                        <option value="Children" id="optAuChildren">학생</option>
+                    </select>
+                </div>
+                <div class="flex-item">
+                    <div class="label-wrapper">
+                        <label id="lblTone">답변 어조</label>
+                        <span class="info-icon" onclick="toggleTooltip(event, 'tipTone')">?</span>
+                        <div class="tooltip-box" id="tipTone">답변의 태도와 말투를 조절합니다. '분석적'인 어조는 객관적인 사실에 집중하게 하고, '친근한' 어조는 사용자에게 정서적 공감을 주는 친절한 가이드 느낌의 대화를 유도합니다.</div>
+                    </div>
+                    <select id="tone" onchange="handleInputChange()">
+                        <option value="" id="optToNone">기본값</option>
+                        <option value="Professional" id="optToProfessional">전문적/공식적</option>
+                        <option value="Friendly" id="optToFriendly">친근함/따뜻함</option>
+                        <option value="Analytical" id="optToAnalytical">분석적/객관적</option>
+                        <option value="Persuasive" id="optToPersuasive">열정적/설득적</option>
+                        <option value="Humorous" id="optToHumorous">유머러스함</option>
+                    </select>
+                </div>
+                <div class="flex-item">
+                    <div class="label-wrapper">
+                        <label id="lblStyle">출력 스타일</label>
+                        <span class="info-icon" onclick="toggleTooltip(event, 'tipStyle')">?</span>
+                        <div class="tooltip-box" id="tipStyle">문서의 구성 방식이나 구조를 결정합니다. '간결' 스타일은 핵심 위주로 빠르게 정보를 전달하며, '기술적' 스타일은 구현 세부사항과 데이터를 포함한 풍부한 전문 정보를 출력하게 만듭니다.</div>
+                    </div>
+                    <select id="style" onchange="handleInputChange()">
+                        <option value="" id="optStNone">기본값</option>
+                        <option value="Technical" id="optStTechnical">기술적/상세</option>
+                        <option value="Creative" id="optStCreative">창의적/서술형</option>
+                        <option value="Academic" id="optStAcademic">학술적/논문</option>
+                        <option value="Concise" id="optStConcise">간결/핵심 위주</option>
+                        <option value="Journalistic" id="optStJournalistic">뉴스/사실 위주</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="bottom-target">
+            <div class="section-title" id="title4">4. 제약 조건 및 역할</div>
+            <div class="flex-row">
+                <div class="flex-item">
+                    <div class="label-wrapper">
+                        <label id="lblTimeframe">사용 데이터 기간</label>
+                        <span class="info-icon" onclick="toggleTooltip(event, 'tipTimeframe')">?</span>
+                        <div class="tooltip-box" id="tipTimeframe">정보의 유효 기간을 제한합니다. AI가 너무 과거의 데이터를 기반으로 잘못된 답변을 하는 것을 방지하고, 최신 트렌드가 반영된 결과물을 얻을 수 있도록 강제합니다.</div>
+                    </div>
+                    <select id="timeframe" onchange="handleInputChange()">
+                        <option value="" id="optTfNone">제한 없음</option>
+                        <option value="realtime" id="optTfRealtime">실시간 검색 필수</option>
+                        <option value="1week" id="optTf1week">최근 1주일</option>
+                        <option value="1month" id="optTf1month">최근 1개월</option>
+                        <option value="3months" id="optTf3months">최근 3개월</option>
+                        <option value="1year" id="optTf1year">최근 1년</option>
+                    </select>
+                </div>
+                <div class="flex-item">
+                    <div class="label-wrapper">
+                        <label id="lblCredibility">신뢰도 및 팩트체크</label>
+                        <span class="info-icon" onclick="toggleTooltip(event, 'tipCredibility')">?</span>
+                        <div class="tooltip-box" id="tipCredibility">AI의 근거 없는 추측(할루시네이션)을 강력하게 억제합니다. '모르면 모른다고 하기'나 '출처 명시'를 통해 AI가 제공하는 정보의 신뢰도를 높이고 교차 검증된 사실만 전달하게 합니다.</div>
+                    </div>
+                    <select id="credibility" onchange="handleInputChange()">
+                        <option value="" id="optCrDefault">기본값</option>
+                        <option value="Don't guess. If you don't know, say so." id="optCrNoGuess">모르면 모른다고 답변</option>
+                        <option value="Use only highly reliable and verified sources." id="optCrReliable">검증된 자료만 사용</option>
+                        <option value="Provide source URLs for all claims." id="optCrUrl">출처 URL 포함</option>
+                        <option value="Cross-reference multiple sources." id="optCrCross">여러 출처 교차 검증</option>
+                        <option value="Base strictly on academic papers." id="optCrAcademic">학술 자료만 인용</option>
+                    </select>
+                </div>
+                <div class="flex-item">
+                    <div class="label-wrapper">
+                        <label id="lblRole">역할 설정 (페르소나)</label>
+                        <span class="info-icon" onclick="toggleTooltip(event, 'tipRole')">?</span>
+                        <div class="tooltip-box" id="tipRole">AI에게 특정 분야의 전문가 자격을 부여합니다. 역할을 설정하면 AI는 단순한 비서가 아닌 해당 분야 수십 년 경력자의 통찰력과 전문 지식을 바탕으로 훨씬 깊이 있는 답변을 내놓습니다.</div>
+                    </div>
+                    <select id="role" onchange="handleRoleChange(); handleInputChange()">
+                        <option value="Expert" id="optRoleExpert">최고 전문가</option>
+                        <option value="Assistant" id="optRoleAsst">일반 비서</option>
+                        <option value="Consultant" id="optRoleConsultant">비즈니스 컨설턴트</option>
+                        <option value="Developer" id="optRoleDev">엔지니어</option>
+                        <option value="Writer" id="optRoleWriter">작가</option>
+                        <option value="manual" id="optRoleManual">직접 입력</option>
+                    </select>
+                    <input type="text" id="manualRoleInput" oninput="handleInputChange()" style="display:none;" placeholder="예: 전문 요리사">
+                </div>
+            </div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cotCheck" onchange="handleInputChange()">
+                    <label for="cotCheck" id="lblCot">단계별 추론(CoT)</label>
+                    <span class="info-icon" onclick="toggleTooltip(event, 'tipCot')">?</span>
+                    <div class="tooltip-box" id="tipCot">AI가 정답을 내기 전 논리 단계를 거치게 하여 복잡한 문제의 오답률을 크게 낮춤니다. 특히 수학, 코딩, 복잡한 로직 설계 시 강력한 효과를 발휘합니다.</div>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="noIntroCheck" onchange="handleInputChange()">
+                    <label for="noIntroCheck" id="lblNoIntro">서론/결론 생략</label>
+                    <span class="info-icon" onclick="toggleTooltip(event, 'tipNoIntro')">?</span>
+                    <div class="tooltip-box" id="tipNoIntro">"네, 알겠습니다"와 같은 불필요한 인사말을 제거하여 출력 속도를 높이고 핵심 결과물만 바로 얻을 수 있게 하여 효율성을 높입니다.</div>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="noJargonCheck" onchange="handleInputChange()">
+                    <label for="noJargonCheck" id="lblNoJargon">전문 용어 배제</label>
+                    <span class="info-icon" onclick="toggleTooltip(event, 'tipNoJargon')">?</span>
+                    <div class="tooltip-box" id="tipNoJargon">어려운 기술 용어를 쉬운 대중 언어로 순화하도록 지시합니다. 전문 지식이 없는 사람도 AI의 답변을 즉시 이해하고 활용할 수 있도록 돕습니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="output-row">
+            <div class="button-group">
+                <button id="convertBtn" onclick="generatePrompt()">시스템 프롬프트 생성</button>
+                <button id="copyBtn" onclick="copyPrompt()">결과 복사하기</button>
+            </div>
+            <textarea id="promptOutput" readonly placeholder="최적화된 영문 프롬프트가 출력됩니다."></textarea>
+        </div>
+    </div>
+
+    <!-- Restored and Enhanced Guide Content -->
+    <section class="info-content" id="guide">
+        <h2 id="gTitle">고품질 AI 답변을 위한 프롬프트 엔지니어링 가이드</h2>
+        <p class="info-desc" id="gDesc1">인공지능의 진정한 성능은 정교하게 설계된 프롬프트에서 나옵니다. 전문가의 프레임워크를 기반으로 AI를 200% 더 똑똑하게 활용해 보세요.</p>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <h3 id="ic1T">왜 영어로 질문해야 하나요?</h3>
+                <p id="ic1D">GPT-4, Claude 3 등 세계 최고의 모델들은 학습 데이터의 90% 이상이 영어입니다. 한국어 질문은 모델 내부적으로 번역 과정을 거치며 논리적 뉘앙스가 손실될 수 있습니다. LLMGO를 통해 영어로 변환된 프롬프트를 사용하면 AI의 복잡한 추론 능력과 방대한 어휘력을 100% 끌어내어 훨씬 정교하고 전문적인 답변을 얻을 수 있습니다.</p>
+            </div>
+            <div class="info-card">
+                <h3 id="ic2T">CO-STAR 프레임워크란?</h3>
+                <p id="ic2D">Context(배경), Objective(목표), Style(스타일), Tone(어조), Audience(청중), Response(응답)의 약자로, AI에게 명확한 가이드라인을 제공하는 세계적인 표준 기법입니다. 이 프레임워크는 AI가 답변할 '경계선'을 명확히 설정해주어, 엉뚱한 대답을 하는 환각(Hallucination) 현상을 최소화하고 일관성 있는 고품질 결과물을 보장합니다.</p>
+            </div>
+            <div class="info-card">
+                <h3 id="ic3T">Chain of Thought (CoT)</h3>
+                <p id="ic3D">"단계별로 생각해보자"라는 명령 하나만으로도 AI는 복잡한 수식이나 코딩 로직을 훨씬 더 정확하게 해결합니다. AI가 정답을 성급히 내뱉기 전, 내부적으로 문제를 쪼개어 논리적인 중간 과정을 거치도록 유도하는 이 기법은 수학적 사고가 필요한 작업에서 정답률을 비약적으로 향상시키는 마법과 같은 기술입니다.</p>
+            </div>
+            <div class="info-card">
+                <h3 id="ic4T">Few-Shot Prompting</h3>
+                <p id="ic4D">AI에게 '이런 식으로 대답해줘'라고 구체적인 답변 사례(Example)를 보여주는 기법입니다. 아무런 예시 없이 질문하는 것보다, 1~2개의 잘 만들어진 답변 샘플을 제공하면 AI는 사용자의 특정한 선호도와 출력 형식, 문체 스타일을 완벽하게 파악하여 학습하지 않은 새로운 작업에서도 사용자의 의도와 일치하는 답변을 출력합니다.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modals -->
+<div id="howToModal" class="modal" onclick="closeModal(event, 'howToModal')">
+    <div class="modal-content">
+        <span class="close-modal" onclick="document.getElementById('howToModal').style.display='none'">&times;</span>
+        <div class="modal-title" id="mHowTitle">이용 방법</div>
+        <div class="modal-body" id="mHowBody">핵심 질문을 입력하고, 나머지 항목들을 자유롭게 커스텀하세요!<br><br>시스템 프롬프트 생성 버튼을 누르면 최적화된 영문 프롬프트가 나타납니다. 생성된 결과를 복사하여 AI 서비스에 질문하세요.</div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a onclick="alert('데이터 보호: 모든 데이터는 서버에 저장되지 않고 브라우저 내에서만 처리됩니다.')" id="linkPrivacy">Privacy</a>
+        <a onclick="alert('이용약관: 본 서비스는 무료이며 자유롭게 사용 가능합니다.')" id="linkTerms">Terms</a>
+        <a href="mailto:1000gkxhd1@gmail.com" id="linkContact">Contact</a>
+    </div>
+    <p class="copyright">© 2026 LLMGO Engine. Memory Enabled.</p>
+</footer>
+
+<script>
+    const translations = {
+        ko: {
+            langToggle: "🌐 English", themeDark: "🌙 다크 모드", themeLight: "☀️ 라이트 모드", navGen: "도구", navGuide: "가이드",
+            heroTitle: "AI 10배 똑똑하게 사용하기", heroDesc: "스마트한 AI 유저를 위한 질문용 프롬프트 생성기", btnHowTo: "How To Use",
+            title1: "1. 질문 및 배경", lblTask: "핵심 질문 (필수)", taskPlaceholder: "예: 최근 인기 있는 모바일 게임 장르 분석 보고서 작성", lblContext: "배경 맥락", contextPlaceholder: "예: 저는 시장 조사를 수행 중인 기획자입니다.", optLabel1: "(선택)", optLabel2: "(선택)",
+            titleQuick: "⚡ 퀵 프리셋", btnFact: "🌐 팩트 체크 중심", btnEasy: "👶 이해하기 쉬운 설명", btnExpert: "🎓 전문가 심층 분석", btnCreative: "🎨 창의적 스토리텔링", btnReset: "🔄 선택 설정 초기화",
+            title2: "2. 예시 설정", optExCustom: "직접 입력", optExTable: "표 형태", optExStep: "단계별 가이드", optExQna: "Q&A 인터뷰 형태", optExProcon: "장단점 비교", optExAnalogy: "비유 포함", examplePlaceholder: "예: Q: [질문]? A: [답변] 형식으로 3가지 예시를 들어줘.",
+            title3: "3. 스타일 및 독자 설정", lblAudience: "대상 독자", optAuNone: "제한 없음", optAuGeneral: "일반 대중", optAuBeginner: "입문자", optAuExpert: "전문가", optAuExecutive: "의사 결정권자", optAuChildren: "학생",
+            lblTone: "답변 어조", optToNone: "기본값", optToProfessional: "전문적/공식적", optToFriendly: "친근함/따뜻함", optToAnalytical: "분석적/객관적", optToPersuasive: "설득적", optToHumorous: "유머러스함",
+            lblStyle: "출력 스타일", optStNone: "기본값", optStTechnical: "기술적/상세", optStCreative: "창의적/서술형", optStAcademic: "학술적/논문", optStConcise: "간결/핵심 위주", optStJournalistic: "뉴스/사실 위주",
+            title4: "4. 제약 조건 및 역할", lblTimeframe: "사용 데이터 기간", optTfNone: "제한 없음", optTfRealtime: "실시간 검색 필수", optTf1week: "최근 1주일", optTf1month: "최근 1개월", optTf3months: "최근 3개월", optTf1year: "최근 1년",
+            lblCredibility: "신뢰도 및 팩트체크", optCrDefault: "기본값", optCrNoGuess: "모르면 모른다고 답변", optCrReliable: "검증된 자료만", optCrUrl: "출처 URL 포함", optCrCross: "교차 검증", optCrAcademic: "학술 자료만",
+            lblRole: "역할 설정 (페르소나)", optRoleExpert: "최고 전문가", optRoleAsst: "일반 비서", optRoleConsultant: "비즈니스 컨설턴트", optRoleDev: "개발자", optRoleWriter: "작가", optRoleManual: "직접 입력",
+            manualRolePlaceholder: "예: 전문 요리사, 역사학자", lblCot: "단계별 추론(CoT)", lblNoIntro: "서론/결론 생략", lblNoJargon: "전문 용어 배제",
+            btnGenerate: "시스템 프롬프트 생성", btnCopy: "결과 복사하기", outputPlaceholder: "최적화된 영문 프롬프트가 출력됩니다.",
+            mHowTitle: "이용 방법", mHowBody: "핵심 질문을 입력하고, 나머지 항목들을 자유롭게 커스텀하세요!<br><br>시스템 프롬프트 생성 버튼을 누르면 최적화된 영문 프롬프트가 나타납니다.",
+            alertNoTask: "핵심 질문은 필수입니다.", processing: "최적화 중...", copySuccess: "복사되었습니다!", linkPrivacy: "Privacy", linkTerms: "Terms", linkContact: "Contact",
+            tipTask: "AI가 수행할 핵심 목표입니다. 목표가 명확할수록 AI는 사용자의 의도를 정확히 파악하여 엉뚱한 대답을 하지 않고 최적화된 결과물을 도출합니다.",
+            tipContext: "사용자가 누구인지, 왜 이 질문을 하는지에 대한 상황 정보를 제공하면 AI가 불필요한 가정에 하지 않고 사용자 환경에 100% 맞춤화된 답변을 생성합니다.",
+            tipExample: "답변 예시를 제공(Few-shot)하면 AI가 사용자가 원하는 출력 패턴을 학습합니다. 이를 통해 복잡한 구조의 데이터도 오차 없이 일관된 형식으로 대답하게 됩니다.",
+            tipAudience: "답변을 읽을 대상을 지정하면 AI가 용어의 난이도와 설명의 깊이가 조절됩니다.",
+            tipTone: "답변의 태도와 말투를 조절하여 대화의 목적(설득, 정보 전달 등)에 부합하게 합니다.",
+            tipStyle: "문서의 구성 방식이나 구조를 지정하여 가독성과 전문성을 결정합니다.",
+            tipTimeframe: "정보의 유효 기간을 제한하여 AI가 너무 오래된 데이터를 참고하지 않도록 방지합니다.",
+            tipCredibility: "AI의 추측을 억제하고 신뢰할 수 있는 출처 활용을 강제하여 답변의 정확성을 높입니다.",
+            tipRole: "AI에게 전문가 역할을 부여하면 해당 분야 특유의 통찰력과 지식이 반영된 답변이 나옵니다.",
+            tipCot: "AI가 정답을 내기 전 논리 단계를 거치게 하여 복잡한 문제의 오답률을 크게 낮춤니다.",
+            tipNoIntro: "불필요한 인사말을 제거하여 출력 속도를 높이고 결과물만 깔끔하게 얻습니다.",
+            tipNoJargon: "전문 지식이 없는 사람도 즉시 이해할 수 있도록 대중적인 용어로만 답변합니다.",
+            gTitle: "고품질 AI 답변을 위한 프롬프트 엔지니어링 가이드", ic1T: "왜 영어로 질문해야 하나요?", ic1D: "최신 모델들은 영어 데이터를 기반으로 가장 깊은 논리적 사고를 수행합니다. LLMGO를 통해 영어로 변환된 프롬프트를 사용하면 AI의 능력을 100% 끌어내어 정교한 답변을 얻을 수 있습니다.",
+            ic2T: "CO-STAR 프레임워크란?", ic2D: "배경, 목표, 스타일, 어조, 청중, 응답의 약자로, AI에게 명확한 가이드라인을 제공하는 세계적인 표준 기법입니다. 환각 현상을 최소화하고 고품질 결과물을 보장합니다.",
+            ic3T: "Chain of Thought (CoT)", ic3D: "AI가 정답을 내기 전 내부적으로 문제를 쪼개어 논리적인 추론 과정을 거치도록 유도하는 기법입니다. 수학, 코딩 등 복잡한 작업에서 정답률을 비약적으로 향상시킵니다.",
+            ic4T: "Few-Shot Prompting", ic4D: "답변 예시를 제공하여 AI가 사용자의 의도를 완벽하게 파악하도록 돕는 기법입니다."
+        },
+        en: {
+            langToggle: "🌐 한국어", themeDark: "🌙 Dark Mode", themeLight: "☀️ Light Mode", navGen: "Tool", navGuide: "Guide",
+            heroTitle: "Use AI 10x Smarter", heroDesc: "Prompt generator for the smart AI users.", btnHowTo: "How To Use",
+            title1: "1. Task & Context", lblTask: "Core Task (Req)", taskPlaceholder: "e.g., Analysis of recent mobile game trends", lblContext: "Context", contextPlaceholder: "e.g., I am a planner performing market research.", optLabel1: "(Opt)", optLabel2: "(Opt)",
+            titleQuick: "⚡ Quick Presets", btnFact: "🌐 Fact-Based", btnEasy: "👶 Easy Explainer", btnExpert: "🎓 Deep Analysis", btnCreative: "🎨 Storytelling", btnReset: "🔄 Reset Options",
+            title2: "2. Example Settings", optExCustom: "Manual", optExTable: "Table", optExStep: "Step-by-Step", optExQna: "Q&A Interview", optExProcon: "Pros & Cons", optExAnalogy: "Analogy", examplePlaceholder: "e.g., Provide 3 examples in Q:? A:! format.",
+            title3: "3. Style & Audience", lblAudience: "Audience", optAuNone: "No Limit", optAuGeneral: "General", optAuBeginner: "Beginner", optAuExpert: "Expert", optAuExecutive: "Executive", optAuChildren: "Student",
+            lblTone: "Tone", optToNone: "Default", optToProfessional: "Professional", optToFriendly: "Friendly", optToAnalytical: "Analytical", optToPersuasive: "Persuasive", optToHumorous: "Humorous",
+            lblStyle: "Style", optStNone: "Default", optStTechnical: "Technical", optStCreative: "Creative", optStAcademic: "Academic", optStConcise: "Concise", optStJournalistic: "Journalistic",
+            title4: "4. Constraints", lblTimeframe: "Data Recency", optTfNone: "No Limit", optTfRealtime: "Real-time Search", optTf1week: "Last 1 week", optTf1month: "Last 1 month", optTf3months: "Last 3 months", optTf1year: "Last 1 year",
+            lblCredibility: "Credibility", optCrDefault: "Default", optCrNoGuess: "Don't guess", optCrReliable: "Verified only", optCrUrl: "Include URLs", optCrCross: "Cross-check", optCrAcademic: "Academic only",
+            lblRole: "Role (Persona)", optRoleExpert: "Expert", optRoleAsst: "Assistant", optRoleConsultant: "Consultant", optRoleDev: "Developer", optRoleWriter: "Writer", optRoleManual: "Manual",
+            manualRolePlaceholder: "e.g., Professional Chef", lblCot: "Reasoning (CoT)", lblNoIntro: "Skip Intro", lblNoJargon: "No Jargon",
+            btnGenerate: "Generate Prompt", btnCopy: "Copy results", outputPlaceholder: "The optimized prompt will show here.",
+            mHowTitle: "How To Use", mHowBody: "Input your core task and customize freely!<br><br>Click Generate and use the result to ask your AI.",
+            alertNoTask: "Task is required.", processing: "Optimizing...", copySuccess: "Copied!", linkPrivacy: "Privacy", linkTerms: "Terms", linkContact: "Contact",
+            tipTask: "The primary goal for the AI. Specificity boosts quality.", tipContext: "Background context prevents AI from making wrong assumptions.", tipExample: "Examples teach AI the desired response pattern.",
+            tipAudience: "Adjusts vocabulary level for the reader's understanding.", tipTone: "Sets the emotional attitude of the conversation.", tipStyle: "Determines the structure and professionalism.",
+            tipTimeframe: "Limits data to recent sources for accuracy.", tipCredibility: "Forcing verifiable sources increases the accuracy.", tipRole: "Assigns a persona for specialized insights.",
+            tipCot: "Forcing logical steps greatly reduces errors.", tipNoIntro: "Removes greetings for cleaner output.", tipNoJargon: "Explains in simple terms for everyone.",
+            gTitle: "Prompt Engineering Guide", ic1T: "Why ask in English?", ic1D: "Top models perform deepest logic using English data. Translation via LLMGO maximizes their cognitive potential.", ic2T: "What is CO-STAR?", ic2D: "A technique using Context, Goal, and Style to set clear AI boundaries and ensure quality.", ic3T: "Magic of CoT", ic3D: "Commanding step-by-step logic boosts hit rates for coding and complex logical problems significantly.", ic4T: "Few-Shot Prompting", ic4D: "Providing examples helps the AI learn your specific preferences and formatting needs perfectly."
+        }
+    };
+
+    let currentLang = localStorage.getItem('lang') || 'ko';
+
+    function savePrefs() {
+        const p = {
+            task: document.getElementById('taskInput').value,
+            context: document.getElementById('contextInput').value,
+            exType: document.getElementById('exampleType').value,
+            exInput: document.getElementById('exampleInput').value,
+            aud: document.getElementById('audience').value,
+            tone: document.getElementById('tone').value,
+            style: document.getElementById('style').value,
+            tf: document.getElementById('timeframe').value,
+            cr: document.getElementById('credibility').value,
+            role: document.getElementById('role').value,
+            manualRole: document.getElementById('manualRoleInput').value,
+            cot: document.getElementById('cotCheck').checked,
+            ni: document.getElementById('noIntroCheck').checked,
+            nj: document.getElementById('noJargonCheck').checked
+        };
+        localStorage.setItem('llmgo_prefs', JSON.stringify(p));
+    }
+
+    function loadPrefs() {
+        const saved = localStorage.getItem('llmgo_prefs');
+        if (!saved) return;
+        const p = JSON.parse(saved);
+        document.getElementById('taskInput').value = p.task || "";
+        document.getElementById('contextInput').value = p.context || "";
+        document.getElementById('exampleType').value = p.exType || "custom";
+        document.getElementById('exampleInput').value = p.exInput || "";
+        document.getElementById('audience').value = p.aud || "";
+        document.getElementById('tone').value = p.tone || "";
+        document.getElementById('style').value = p.style || "";
+        document.getElementById('timeframe').value = p.tf || "";
+        document.getElementById('credibility').value = p.cr || "";
+        document.getElementById('role').value = p.role || "Expert";
+        document.getElementById('manualRoleInput').value = p.manualRole || "";
+        document.getElementById('cotCheck').checked = p.cot || false;
+        document.getElementById('noIntroCheck').checked = p.ni || false;
+        document.getElementById('noJargonCheck').checked = p.nj || false;
+        handleRoleChange(); validateTaskInput();
+    }
+
+    function resetPrefs() {
+        if (!confirm(currentLang === 'ko' ? "모든 설정을 초기화하시겠습니까?" : "Reset all options?")) return;
+        document.getElementById('audience').value = ""; document.getElementById('tone').value = ""; document.getElementById('style').value = "";
+        document.getElementById('timeframe').value = ""; document.getElementById('credibility').value = ""; document.getElementById('role').value = "Expert";
+        document.getElementById('manualRoleInput').value = ""; document.getElementById('cotCheck').checked = false; document.getElementById('noIntroCheck').checked = false;
+        document.getElementById('noJargonCheck').checked = false; document.getElementById('exampleType').value = "custom"; document.getElementById('exampleInput').value = "";
+        handleRoleChange(); savePrefs();
+    }
+
+    function handleInputChange() { savePrefs(); }
+
+    function validateTaskInput() {
+        const input = document.getElementById('taskInput');
+        input.value.trim().length > 0 ? input.classList.remove('is-invalid') : input.classList.add('is-invalid');
+    }
+
+    function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(event, id) { if(event.target.id === id) document.getElementById(id).style.display = 'none'; }
+
+    function toggleTooltip(event, id) {
+        event.stopPropagation();
+        const tip = document.getElementById(id);
+        const isVisible = tip.style.display === 'block';
+        document.querySelectorAll('.tooltip-box').forEach(t => t.style.display = 'none');
+        tip.style.display = isVisible ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', () => document.querySelectorAll('.tooltip-box').forEach(t => t.style.display = 'none'));
+
+    function applyPreset(type) {
+        const presets = {
+            fact: { tf: 'realtime', cr: 'Cross-reference multiple sources.', tone: 'Analytical', style: 'Journalistic' },
+            easy: { aud: 'Beginners', tone: 'Friendly', nj: true, style: 'Creative' },
+            expert: { role: 'Expert', tone: 'Professional', style: 'Technical', cot: true, cr: 'Base strictly on academic papers.' },
+            creative: { role: 'Writer', style: 'Creative', tone: 'Friendly' }
+        };
+        const p = presets[type];
+        if (p) {
+            Object.keys(p).forEach(k => {
+                const el = document.getElementById(k === 'tf' ? 'timeframe' : k === 'cr' ? 'credibility' : k === 'aud' ? 'audience' : k === 'cot' ? 'cotCheck' : k === 'nj' ? 'noJargonCheck' : k);
+                if (el) el.type === 'checkbox' ? el.checked = p[k] : el.value = p[k];
+            });
+            handleRoleChange(); savePrefs();
+            document.getElementById('bottom-target').scrollIntoView({ behavior: 'smooth' });
+            const btn = document.getElementById('convertBtn');
+            btn.classList.add('pulse'); setTimeout(() => btn.classList.remove('pulse'), 600);
+        }
+    }
+
+    function updateExampleText() {
+        const t = { custom: "", table: "| Key | Value |\n|---|---|", step: "1. Step A\n2. Step B", qna: "Q: ?\nA: !", procon: "Pros:\nCons:", analogy: "Like a..." };
+        document.getElementById('exampleInput').value = t[document.getElementById('exampleType').value] || "";
+        handleInputChange();
+    }
+
+    function handleRoleChange() { document.getElementById('manualRoleInput').style.display = document.getElementById('role').value === "manual" ? "block" : "none"; }
+
+    async function translateText(text) {
+        if (!text || !/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text)) return text;
+        try {
+            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q=${encodeURIComponent(text)}`);
+            return (await res.json())[0].map(i => i[0]).join('');
+        } catch (e) { return text; }
+    }
+
+    async function generatePrompt() {
+        const t = translations[currentLang];
+        const taskRaw = document.getElementById('taskInput').value.trim();
+        if (!taskRaw) { alert(t.alertNoTask); return; }
+        document.getElementById('promptOutput').value = t.processing;
+        const task = await translateText(taskRaw);
+        const context = await translateText(document.getElementById('contextInput').value.trim());
+        const example = await translateText(document.getElementById('exampleInput').value.trim());
+        let roleVal = document.getElementById('role').value;
+        if (roleVal === "manual") roleVal = await translateText(document.getElementById('manualRoleInput').value.trim()) || "Expert";
+        let draft = `Role: You are a ${roleVal}.\n\n`;
+        if (context) draft += `Context: ${context}\n\n`;
+        if (document.getElementById('audience').value) draft += `Audience: ${document.getElementById('audience').value}\n`;
+        if (document.getElementById('tone').value) draft += `Tone: ${document.getElementById('tone').value}\n`;
+        if (document.getElementById('style').value) draft += `Style: ${document.getElementById('style').value}\n\n`;
+        draft += `Task: ${task}\n\n`;
+        if (example) draft += `Example Output Format:\n${example}\n\n`;
+        draft += `Constraints:\n`;
+        if (document.getElementById('timeframe').value) draft += `- Use data from ${document.getElementById('timeframe').value}.\n`;
+        if (document.getElementById('credibility').value) draft += `- ${document.getElementById('credibility').value}\n`;
+        if (document.getElementById('cotCheck').checked) draft += `- Let's think step by step.\n`;
+        if (document.getElementById('noIntroCheck').checked) draft += `- Skip greetings. Output content only.\n`;
+        if (document.getElementById('noJargonCheck').checked) draft += `- Avoid complex jargon. Explain simply.\n`;
+        draft += `- Language: Respond in natural Korean.\n`;
+        document.getElementById('promptOutput').value = draft;
+    }
+
+    function copyPrompt() {
+        const out = document.getElementById('promptOutput').value;
+        if (out) navigator.clipboard.writeText(out).then(() => alert(translations[currentLang].copySuccess));
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        applyLanguage();
+    }
+
+    function toggleLanguage() { currentLang = currentLang === 'ko' ? 'en' : 'ko'; localStorage.setItem('lang', currentLang); applyLanguage(); }
+
+    function applyLanguage() {
+        const t = translations[currentLang];
+        document.getElementById('themeToggle').innerText = document.body.classList.contains('light-mode') ? t.themeDark : t.themeLight;
+        document.getElementById('langToggle').innerText = t.langToggle;
+        Object.keys(t).forEach(id => { 
+            const el = document.getElementById(id); 
+            if (el) { 
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = t[id]; 
+                else el.innerHTML = t[id]; 
+            } 
+        });
+        const optIds = ['optExCustom', 'optExTable', 'optExStep', 'optExQna', 'optExProcon', 'optExAnalogy', 'optAuNone', 'optAuGeneral', 'optAuBeginner', 'optAuExpert', 'optAuExecutive', 'optAuChildren', 'optToNone', 'optToProfessional', 'optToFriendly', 'optToAnalytical', 'optToPersuasive', 'optToHumorous', 'optStNone', 'optStTechnical', 'optStCreative', 'optStAcademic', 'optStConcise', 'optStJournalistic', 'optTfNone', 'optTfRealtime', 'optTf1week', 'optTf1month', 'optTf3months', 'optTf1year', 'optCrDefault', 'optCrNoGuess', 'optCrReliable', 'optCrUrl', 'optCrCross', 'optCrAcademic', 'optRoleExpert', 'optRoleAsst', 'optRoleConsultant', 'optRoleDev', 'optRoleWriter', 'optRoleManual'];
+        optIds.forEach(id => { const el = document.getElementById(id); if (el && t[id]) el.innerText = t[id]; });
+    }
+
+    window.onload = () => { 
+        if ((localStorage.getItem('theme') || 'dark') === 'light') document.body.classList.add('light-mode');
+        loadPrefs(); applyLanguage(); 
+    };
+</script>
+</body>
+</html>
