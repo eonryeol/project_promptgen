@@ -222,7 +222,10 @@
 
     <div id="generator">
         <div class="section">
-            <div class="section-title" id="title1">1. 질문 및 배경</div>
+            <div class="section-title" id="title1">
+                <span>1. 질문 및 배경</span>
+                <button class="preset-btn reset-btn" id="btnGlobalReset" style="margin-left: auto; padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="globalReset()">전체 초기화</button>
+            </div>
             <div class="flex-row">
                 <div class="flex-item">
                     <div class="label-wrapper">
@@ -466,7 +469,7 @@
             lblCredibility: "신뢰도 및 팩트체크", optCrDefault: "기본값", optCrNoGuess: "모르면 모른다고 답변", optCrReliable: "검증된 자료만", optCrUrl: "출처 URL 포함", optCrCross: "교차 검증", optCrAcademic: "학술 자료만",
             lblRole: "역할 설정 (페르소나)", optRoleExpert: "최고 전문가", optRoleAsst: "일반 비서", optRoleConsultant: "비즈니스 컨설턴트", optRoleDev: "개발자", optRoleWriter: "작가", optRoleManual: "직접 입력",
             manualRolePlaceholder: "예: 전문 요리사, 역사학자", lblCot: "단계별 추론(CoT)", lblNoIntro: "서론/결론 생략", lblNoJargon: "전문 용어 배제",
-            btnGenerate: "시스템 프롬프트 생성", btnCopy: "결과 복사하기", outputPlaceholder: "최적화된 영문 프롬프트가 출력됩니다.",
+            btnGenerate: "시스템 프롬프트 생성", btnCopy: "결과 복사하기", outputPlaceholder: "최적화된 영문 프롬프트가 출력됩니다.", btnGlobalReset: "전체 초기화",
             mHowTitle: "이용 방법", mHowBody: "핵심 질문을 입력하고, 나머지 항목들을 자유롭게 커스텀하세요!<br><br>시스템 프롬프트 생성 버튼을 누르면 최적화된 영문 프롬프트가 나타납니다.",
             alertNoTask: "핵심 질문은 필수입니다.", processing: "최적화 중...", copySuccess: "복사되었습니다!", linkPrivacy: "Privacy", linkTerms: "Terms", linkContact: "Contact",
             tipTask: "AI가 수행할 핵심 목표입니다. 목표가 명확할수록 AI는 사용자의 의도를 정확히 파악하여 엉뚱한 대답을 하지 않고 최적화된 결과물을 도출합니다.",
@@ -499,7 +502,7 @@
             lblCredibility: "Credibility", optCrDefault: "Default", optCrNoGuess: "Don't guess", optCrReliable: "Verified only", optCrUrl: "Include URLs", optCrCross: "Cross-check", optCrAcademic: "Academic only",
             lblRole: "Role (Persona)", optRoleExpert: "Expert", optRoleAsst: "Assistant", optRoleConsultant: "Consultant", optRoleDev: "Developer", optRoleWriter: "Writer", optRoleManual: "Manual",
             manualRolePlaceholder: "e.g., Professional Chef", lblCot: "Reasoning (CoT)", lblNoIntro: "Skip Intro", lblNoJargon: "No Jargon",
-            btnGenerate: "Generate Prompt", btnCopy: "Copy results", outputPlaceholder: "The optimized prompt will show here.",
+            btnGenerate: "Generate Prompt", btnCopy: "Copy results", outputPlaceholder: "The optimized prompt will show here.", btnGlobalReset: "Global Reset",
             mHowTitle: "How To Use", mHowBody: "Input your core task and customize freely!<br><br>Click Generate and use the result to ask your AI.",
             alertNoTask: "Task is required.", processing: "Optimizing...", copySuccess: "Copied!", linkPrivacy: "Privacy", linkTerms: "Terms", linkContact: "Contact",
             tipTask: "The primary goal for the AI. Specificity boosts quality.", tipContext: "Background context prevents AI from making wrong assumptions.", tipExample: "Examples teach AI the desired response pattern.",
@@ -560,6 +563,25 @@
         document.getElementById('manualRoleInput').value = ""; document.getElementById('cotCheck').checked = false; document.getElementById('noIntroCheck').checked = false;
         document.getElementById('noJargonCheck').checked = false; document.getElementById('exampleType').value = "custom"; document.getElementById('exampleInput').value = "";
         handleRoleChange(); savePrefs();
+    }
+
+    function globalReset() {
+        if (!confirm(currentLang === 'ko' ? "모든 입력을 초기화하시겠습니까?" : "Reset all inputs?")) return;
+        document.getElementById('taskInput').value = "";
+        document.getElementById('contextInput').value = "";
+        document.getElementById('audience').value = ""; 
+        document.getElementById('tone').value = ""; 
+        document.getElementById('style').value = "";
+        document.getElementById('timeframe').value = ""; 
+        document.getElementById('credibility').value = ""; 
+        document.getElementById('role').value = "Expert";
+        document.getElementById('manualRoleInput').value = ""; 
+        document.getElementById('cotCheck').checked = false; 
+        document.getElementById('noIntroCheck').checked = false;
+        document.getElementById('noJargonCheck').checked = false; 
+        document.getElementById('exampleType').value = "custom"; 
+        document.getElementById('exampleInput').value = "";
+        handleRoleChange(); validateTaskInput(); savePrefs();
     }
 
     function handleInputChange() { savePrefs(); }
@@ -666,6 +688,7 @@
             const el = document.getElementById(id); 
             if (el) { 
                 if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = t[id]; 
+                else if (id === 'title1') el.querySelector('span').innerText = t[id];
                 else el.innerHTML = t[id]; 
             } 
         });
