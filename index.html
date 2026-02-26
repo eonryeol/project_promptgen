@@ -708,31 +708,61 @@
         } catch (e) { return text; }
     }
 
+    const WORKER_URL = "https://project-promptgen-worker.eonryeol.workers.dev";
+
     async function generatePrompt() {
         const t = translations[currentLang];
         const taskRaw = document.getElementById('taskInput').value.trim();
         if (!taskRaw) { alert(t.alertNoTask); return; }
         document.getElementById('promptOutput').value = t.processing;
-        const task = await translateText(taskRaw);
-        const context = await translateText(document.getElementById('contextInput').value.trim());
-        const example = await translateText(document.getElementById('exampleInput').value.trim());
-        let roleVal = document.getElementById('role').value;
-        if (roleVal === "manual") roleVal = await translateText(document.getElementById('manualRoleInput').value.trim()) || "Expert";
-        let draft = `Role: You are a ${roleVal}.\n\n`;
-        if (context) draft += `Context: ${context}\n\n`;
-        if (document.getElementById('audience').value) draft += `Audience: ${document.getElementById('audience').value}\n`;
-        if (document.getElementById('tone').value) draft += `Tone: ${document.getElementById('tone').value}\n`;
-        if (document.getElementById('style').value) draft += `Style: ${document.getElementById('style').value}\n\n`;
-        draft += `Task: ${task}\n\n`;
-        if (example) draft += `Example Output Format:\n${example}\n\n`;
-        draft += `Constraints:\n`;
-        if (document.getElementById('timeframe').value) draft += `- Use data from ${document.getElementById('timeframe').value}.\n`;
-        if (document.getElementById('credibility').value) draft += `- ${document.getElementById('credibility').value}\n`;
-        if (document.getElementById('cotCheck').checked) draft += `- Let's think step by step.\n`;
-        if (document.getElementById('noIntroCheck').checked) draft += `- Skip greetings. Output content only.\n`;
-        if (document.getElementById('noJargonCheck').checked) draft += `- Avoid complex jargon. Explain simply.\n`;
-        draft += `- Language: Respond in natural Korean.\n`;
-        document.getElementById('promptOutput').value = draft;
+        
+        try {
+            const task = await translateText(taskRaw);
+            const context = await translateText(document.getElementById('contextInput').value.trim());
+            const example = await translateText(document.getElementById('exampleInput').value.trim());
+            let roleVal = document.getElementById('role').value;
+            if (roleVal === "manual") roleVal = await translateText(document.getElementById('manualRoleInput').value.trim()) || "Expert";
+            
+            let draft = `Role: You are a ${roleVal}.\n\n`;
+            if (context) draft += `Context: ${context}\n\n`;
+            if (document.getElementById('audience').value) draft += `Audience: ${document.getElementById('audience').value}\n`;
+            if (document.getElementById('tone').value) draft += `Tone: ${document.getElementById('tone').value}\n`;
+            if (document.getElementById('style').value) draft += `Style: ${document.getElementById('style').value}\n\n`;
+            draft += `Task: ${task}\n\n`;
+            if (example) draft += `Example Output Format:\n${example}\n\n`;
+            draft += `Constraints:\n`;
+            if (document.getElementById('timeframe').value) draft += `- Use data from ${document.getElementById('timeframe').value}.\n`;
+            if (document.getElementById('credibility').value) draft += `- ${document.getElementById('credibility').value}\n`;
+            if (document.getElementById('cotCheck').checked) draft += `- Let's think step by step.\n`;
+            if (document.getElementById('noIntroCheck').checked) draft += `- Skip greetings. Output content only.\n`;
+            if (document.getElementById('noJargonCheck').checked) draft += `- Avoid complex jargon. Explain simply.\n`;
+            draft += `- Language: Respond in natural Korean.\n`;
+
+            // Try to call AI Optimizer (Cloudflare Worker)
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: draft })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.optimizedPrompt) {
+                        document.getElementById('promptOutput').value = data.optimizedPrompt;
+                        return;
+                    }
+                }
+                console.warn("AI Optimization failed, using draft instead.");
+                document.getElementById('promptOutput').value = draft;
+            } catch (apiError) {
+                console.error("API Call Error:", apiError);
+                document.getElementById('promptOutput').value = draft;
+            }
+        } catch (e) {
+            console.error("Prompt Generation Error:", e);
+            document.getElementById('promptOutput').value = "Error generating prompt. Please try again.";
+        }
     }
 
     function copyPrompt() {
