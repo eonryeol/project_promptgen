@@ -142,18 +142,20 @@
             transform: translateX(-50%);
             background-color: var(--card-bg);
             color: var(--text-main);
-            padding: 1rem 2rem;
-            border-radius: 99px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
             border: 1px solid var(--primary);
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             z-index: 3000;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s, transform 0.5s;
             text-align: center;
-            white-space: nowrap;
+            width: calc(100% - 40px);
+            max-width: 500px;
+            line-height: 1.4;
         }
         .preset-popup.show {
             opacity: 1;
