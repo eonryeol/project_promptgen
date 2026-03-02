@@ -3,3 +3,5 @@ Allow: /
 
 User-agent: Yeti
 Allow: /
+
+Sitemap: https://promptgenerator-b9w.pages.dev/sitemap.xml
